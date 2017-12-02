@@ -4,7 +4,7 @@ Aura Proof-of-Authority network with two validator nodes.
 
 ### Get Parity:
 
-- Online-Installer: `$ bash <(curl https://get.parity.io -kL)`
+- One-Line-Installer: `$ bash <(curl https://get.parity.io -kL)`
 - Releases: https://github.com/paritytech/parity/releases
 - Instructions: https://github.com/paritytech/parity/wiki/Setup
 
