@@ -1,4 +1,4 @@
-pragma solidity ^0.4.17;
+pragma solidity ^0.4.19;
 
 // initilizes a new trip and rates quality
 contract tripRater {
@@ -34,12 +34,18 @@ contract tripRater {
 
     // the truck is starting the trip
     function startTrip() internal {
+
+        // initialize at 100.000%
         tripQuality = 100000;
+
+        // start the truck
         isDriving = true;
     }
 
     // finalizes the trip once the truck arrives
     function finalizeTrip () public only_truck {
+
+        // stop the truck
         isDriving = false;
     }
 
@@ -47,7 +53,11 @@ contract tripRater {
     // {"sensorType": "LIGHT", "valueLength": 1, "values": 0.96, "timestamp": 1512052879014, "": ""}
     function trackLightEvent (uint256 _time, uint256 _light) public only_truck {
         if (msg.sender == truckDevice && isDriving) {
+
+            // rating reduces by -10.000%
             tripQuality = tripQuality - 10000;
+
+            // set light and time
             lightIllumilation = _light;
             latestEvent = _time;
         }
@@ -57,9 +67,23 @@ contract tripRater {
     // {"sensorType": "ACCELEROMETER", "valueLength": 3, "values": [0.09375, 0.055419921875, -0.912109375], "timestamp": 1512052880297, "": ""}
     function trackBumpEvent (uint256 _time, uint256 _z) public only_truck {
         if (msg.sender == truckDevice && isDriving) {
+
+            // rating reduces by -0.001%
             tripQuality = tripQuality - 1;
+
+            // set bump intensity and time
             zAcceleration = _z;
             latestEvent = _time;
         }
+    }
+
+    // allow calling the truck status
+    function isTruckDriving () constant public returns (bool) {
+        return isDriving;
+    }
+
+    // allow calling the trip quality
+    function getTripRating () constant public returns (uint256) {
+        return tripQuality;
     }
 }
