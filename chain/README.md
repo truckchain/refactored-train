@@ -25,3 +25,6 @@ Both the json and the txt are available in this repository.
     2017-12-02 15:49:32     2/25 peers   8 KiB chain 8 KiB db 0 bytes queue 10 KiB sync  RPC:  0 conn,  0 req/s,   0 µs
     2017-12-02 15:50:02     2/25 peers   8 KiB chain 8 KiB db 0 bytes queue 10 KiB sync  RPC:  0 conn,  0 req/s,   0 µs
     2017-12-02 15:50:29  Imported #3 fb58…f509 (0 txs, 0.00 Mgas, 0.81 ms, 0.56 KiB)
+
+- Chain Explorer: http://truckchain.5chdn.co/#/ 
+- Github: https://github.com/TruckChain/explorer
