@@ -77,6 +77,7 @@ contract CarrierRegistry {
     // the truck is starting a trip for the carrier
     function newTrip (uint256 _light, uint256 _z) public returns (uint256) {
         uint256 tripID = numTrips + 1;
+        assert(tripID >= numTrips);
         allTrips[tripID] = Trip(msg.sender, 100000, _light, _z, 0, false);
         return tripID;
     }
@@ -87,6 +88,7 @@ contract CarrierRegistry {
             // stop the truck
             allTrips[_id].isFinalized = true;
             carrierQualityAbsolute = carrierQualityAbsolute + allTrips[_id].tripQuality;
+            assert(carrierQualityAbsolute >= carrierQualityAbsolute);
         }
     }
 
@@ -95,7 +97,9 @@ contract CarrierRegistry {
         if (msg.sender == allTrips[_id].truckDevice && !allTrips[_id].isFinalized) {
 
             // rating reduces by -10.000%
-            int256 quality = int256(allTrips[_id].tripQuality -10000);
+            uint256 penalty = 10000;
+            assert(penalty <= allTrips[_id].tripQuality);
+            int256 quality = int256(allTrips[_id].tripQuality - penalty);
             if (quality > 0) {
                 allTrips[_id].tripQuality = uint256(quality);
             } else {
@@ -113,7 +117,9 @@ contract CarrierRegistry {
         if (msg.sender == allTrips[_id].truckDevice && !allTrips[_id].isFinalized) {
 
             // rating reduces by -0.1%
-            int256 quality = int256(allTrips[_id].tripQuality -100);
+            uint256 penalty = 100;
+            assert(penalty <= allTrips[_id].tripQuality);
+            int256 quality = int256(allTrips[_id].tripQuality - penalty);
             if (quality > 0) {
                 allTrips[_id].tripQuality = uint256(quality);
             } else {
