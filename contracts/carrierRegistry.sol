@@ -29,6 +29,9 @@ contract CarrierRegistry {
     // stores the name of the carrier
     bytes32 carrierName;
 
+    // stores the carrier quality
+    uint256 carrierQualityAbsolute;
+
     // stores the carrier registry owner
     address registryOwner;
 
@@ -39,7 +42,7 @@ contract CarrierRegistry {
         address truckDevice;
 
         // quality of the trip. 100000 is perfect. 0 is bad, probably failed.
-        int256 tripQuality;
+        uint256 tripQuality;
 
         // tracks the state of the light sensor
         uint256 lightIllumilation;
@@ -78,11 +81,12 @@ contract CarrierRegistry {
         return tripID;
     }
 
-    // finalizes the trip once the truck arrives
+    // finalizes the trip once the truck arrives, updates carrier rating
     function finalizeTrip (uint256 _id) public {
         if (msg.sender == allTrips[_id].truckDevice) {
             // stop the truck
             allTrips[_id].isFinalized = true;
+            carrierQualityAbsolute = carrierQualityAbsolute + allTrips[_id].tripQuality;
         }
     }
 
@@ -91,9 +95,9 @@ contract CarrierRegistry {
         if (msg.sender == allTrips[_id].truckDevice && !allTrips[_id].isFinalized) {
 
             // rating reduces by -10.000%
-            int256 quality = allTrips[_id].tripQuality -10000;
+            int256 quality = int256(allTrips[_id].tripQuality -10000);
             if (quality > 0) {
-                allTrips[_id].tripQuality = quality;
+                allTrips[_id].tripQuality = uint256(quality);
             } else {
                 allTrips[_id].tripQuality = 0;
             }
@@ -109,9 +113,9 @@ contract CarrierRegistry {
         if (msg.sender == allTrips[_id].truckDevice && !allTrips[_id].isFinalized) {
 
             // rating reduces by -0.1%
-            int256 quality = allTrips[_id].tripQuality -100;
+            int256 quality = int256(allTrips[_id].tripQuality -100);
             if (quality > 0) {
-                allTrips[_id].tripQuality = quality;
+                allTrips[_id].tripQuality = uint256(quality);
             } else {
                 allTrips[_id].tripQuality = 0;
             }
@@ -133,7 +137,7 @@ contract CarrierRegistry {
     }
 
     // allow calling the trip quality
-    function getTripRating (uint256 _id) constant public returns (int256) {
+    function getTripRating (uint256 _id) constant public returns (uint256) {
         return allTrips[_id].tripQuality;
     }
 
@@ -145,5 +149,11 @@ contract CarrierRegistry {
     // allow calling the carrier name of this instance
     function getCarrierName () constant public returns (bytes32) {
         return carrierName;
+    }
+
+    // allow getting the carrier quality rating
+    function getCarrierQuality () constant public returns (uint256) {
+        uint256 qualityRelative = carrierQualityAbsolute / numTrips;
+        return qualityRelative;
     }
 }
