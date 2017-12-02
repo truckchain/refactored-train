@@ -71,6 +71,7 @@ contract CarrierRegistry {
     function CarrierRegistry (bytes32 _name) public {
         registryOwner = msg.sender;
         carrierName = _name;
+        carrierQualityAbsolute = 0;
         numTrips = 0;
     }
 
