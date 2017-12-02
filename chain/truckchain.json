@@ -17,7 +17,8 @@
         "gasLimitBoundDivisor": "0x400",
         "maximumExtraDataSize": "0x20",
         "minGasLimit": "0x1388",
-        "networkID" : "0x232342"
+        "networkID" : "0x232342",
+        "registry" : "0x6CeB76d46e1B51709a21Da21bA2f5C54765e4f1E"
     },
     "genesis": {
         "seal": {
