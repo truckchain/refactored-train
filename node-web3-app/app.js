@@ -19,7 +19,7 @@ function get_trip_data(contract_address, trip_id) {
     var isFinalized = instance.isTripFinalized.call(trip_id);
     
     if (!isFinalized) {
-        //return {};
+        return {};
     }
 
     var c = instance.getTripRating.call(trip_id).c;
@@ -137,19 +137,20 @@ function write_json(filename, obj) {
 }
 
 function update_all() {
-    var number_of_trips = 1; //get_number_of_trips(1);
+    var all_carriers = read_json('carriers.json');
+    var all_trips = read_json('trips.json');
+
+    var number_of_trips = get_number_of_trips(1);
 
     for (var i=1; i<=number_of_trips;i++) {
         var result = get_carrier_trip_data(1, i);
 
-        all_carriers = read_json('carriers.json');
         all_carriers = update_carriers_from_event(all_carriers, result);
-        write_json('carriers.json', all_carriers);
-
-        all_trips = read_json('trips.json');
         all_trips = update_trips_from_event(all_trips, result);
-        write_json('trips.json', all_trips);
     }
+
+    write_json('carriers.json', all_carriers);
+    write_json('trips.json', all_trips);
 }
 
 update_all();
