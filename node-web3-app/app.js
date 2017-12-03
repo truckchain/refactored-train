@@ -121,9 +121,34 @@ function update_trips_from_event(current_trips, new_event) {
     });
 }
 
+function trip_already_captured(completed_trips, carrier_id, trip_id) {
+    var carrier_data = completed_trips[carrier_id];
+    if (!carrier_data) return false;
+
+    return carrier_data[trip_id];
+}
+
+
+function set_completed_trips(completed_trips, new_event) {
+    c = completed_trips;
+    if (!new_event.trip_id) { //also handles blank new_event
+        return c;
+    }
+
+    if (!c[new_event.carrier_id]) {
+      c[new_event.carrier_id] = {};
+    }
+    c[new_event.carrier_id][new_event.trip_id] = true;
+    return c;
+}
+
 function read_json(filename) {
   var fs = require('fs');
-  return JSON.parse(fs.readFileSync(filename, 'utf8'));
+  try {
+    return JSON.parse(fs.readFileSync(filename, 'utf8'));
+  } catch (err) { }
+
+  return {};
 }
 
 function write_json(filename, obj) {
@@ -137,18 +162,25 @@ function write_json(filename, obj) {
 }
 
 function update_all() {
+    var completed_trips = read_json('completed_trips.json');
     var all_carriers = read_json('carriers.json');
     var all_trips = read_json('trips.json');
 
     var number_of_trips = get_number_of_trips(1);
 
+    var carrier_id = 1;
     for (var i=1; i<=number_of_trips;i++) {
-        var result = get_carrier_trip_data(1, i);
+        if (trip_already_captured(completed_trips, carrier_id, i)) {
+            continue;
+        }
+        var result = get_carrier_trip_data(carrier_id, i);
 
         all_carriers = update_carriers_from_event(all_carriers, result);
         all_trips = update_trips_from_event(all_trips, result);
+        completed_trips = set_completed_trips(completed_trips, result);
     }
 
+    write_json('completed_trips.json', completed_trips);
     write_json('carriers.json', all_carriers);
     write_json('trips.json', all_trips);
 }
