@@ -79,7 +79,6 @@ contract CarrierRegistry {
     function newTrip (uint256 _light, uint256 _z) public returns (uint256) {
         uint256 tripID = numTrips + 1;
         assert(tripID >= numTrips);
-        numTrips = numTrips + 1;
         allTrips[tripID] = Trip(msg.sender, 100000, _light, _z, 0, false);
         return tripID;
     }
@@ -91,6 +90,7 @@ contract CarrierRegistry {
             allTrips[_id].isFinalized = true;
             carrierQualityAbsolute = carrierQualityAbsolute + allTrips[_id].tripQuality;
             assert(carrierQualityAbsolute >= carrierQualityAbsolute);
+            numTrips = numTrips + 1;
         }
     }
 
