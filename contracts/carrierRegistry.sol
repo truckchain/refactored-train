@@ -66,9 +66,17 @@ contract CarrierRegistry {
     // stores the number of finalized trips
     uint256 numFinalizedTrips;
 
-
     // fires an event when new trips are registered
-    event NewTripRegistered (uint256 tripID);
+    event TripRegistered (uint256 tripID);
+
+    // fires an event when a trip is finalized
+    event TripFinalized (uint256 tripID, uint256 tripQuality);
+
+    // fires an event when a road bump is tracked
+    event BumpTracked (uint256 tripID, uint256 time, uint256 zAcceleration);
+
+    // fires an event when a light event is tracked
+    event LightTracked (uint256 tripID, uint256 time, uint256 lightIllumilation);
 
     // allows only the registry owner to execute
     modifier onlyOwner { require (msg.sender == registryOwner); _; }
@@ -89,18 +97,21 @@ contract CarrierRegistry {
         assert(tripID >= numTrips);
         allTrips[tripID] = Trip(msg.sender, 100000, _light, _z, 0, false);
         numTrips = numTrips + 1;
-        NewTripRegistered(tripID);
+        TripRegistered(tripID);
     }
 
     // finalizes the trip once the truck arrives, updates carrier rating
     function finalizeTrip (uint256 _id) public {
-        if (msg.sender == allTrips[_id].truckDevice) {
+        if (msg.sender == allTrips[_id].truckDevice && !allTrips[_id].isFinalized) {
 
             // stop the truck
             allTrips[_id].isFinalized = true;
             carrierQualityAbsolute = carrierQualityAbsolute + allTrips[_id].tripQuality;
             assert(carrierQualityAbsolute >= carrierQualityAbsolute);
+
+            // finalize the trip
             numFinalizedTrips = numFinalizedTrips + 1;
+            TripFinalized(_id, allTrips[_id].tripQuality);
         }
     }
 
@@ -121,6 +132,7 @@ contract CarrierRegistry {
             // set light and time
             allTrips[_id].lightIllumilation = _light;
             allTrips[_id].latestEvent = _time;
+            BumpTracked(_id, _time, _light);
         }
     }
 
@@ -141,6 +153,7 @@ contract CarrierRegistry {
             // set bump intensity and time
             allTrips[_id].zAcceleration = _z;
             allTrips[_id].latestEvent = _time;
+            BumpTracked(_id, _time, _z);
         }
     }
 
