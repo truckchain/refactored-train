@@ -63,6 +63,9 @@ contract CarrierRegistry {
     // stores the number of initialized trips
     uint256 numTrips;
 
+    // fires an event when new trips are registered
+    event NewTripRegistered (uint256 tripID);
+
     // allows only the registry owner to execute
     modifier onlyOwner { require (msg.sender == registryOwner); _; }
 
@@ -76,16 +79,17 @@ contract CarrierRegistry {
     }
 
     // the truck is starting a trip for the carrier
-    function newTrip (uint256 _light, uint256 _z) public returns (uint256) {
+    function newTrip (uint256 _light, uint256 _z) public {
         uint256 tripID = numTrips + 1;
         assert(tripID >= numTrips);
         allTrips[tripID] = Trip(msg.sender, 100000, _light, _z, 0, false);
-        return tripID;
+        NewTripRegistered(tripID);
     }
 
     // finalizes the trip once the truck arrives, updates carrier rating
     function finalizeTrip (uint256 _id) public {
         if (msg.sender == allTrips[_id].truckDevice) {
+
             // stop the truck
             allTrips[_id].isFinalized = true;
             carrierQualityAbsolute = carrierQualityAbsolute + allTrips[_id].tripQuality;
