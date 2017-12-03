@@ -6,6 +6,8 @@ Truck Chain blockchain specification and smart contract logic
 
 how to connect to the chain? instructions can be found in `chains/`[README.md](chains/README.md)
 
+![shot](icon/truckchain-shot.png)
+
 ## smart contract logic
 
 can be found in `contracts/*.sol`
