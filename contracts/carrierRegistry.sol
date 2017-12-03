@@ -21,6 +21,7 @@
 //! OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //! SOFTWARE.
 
+// use solidity
 pragma solidity ^0.4.19;
 
 // carrier registry containing trailer trips
@@ -83,7 +84,6 @@ contract CarrierRegistry {
 
     // allows only the registry owner to execute
     modifier onlyOwner { require (msg.sender == registryOwner); _; }
-
 
     // constructor, sets carrier name and initializes trips to 0
     function CarrierRegistry (bytes32 _name) public {
