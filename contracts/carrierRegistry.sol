@@ -63,6 +63,10 @@ contract CarrierRegistry {
     // stores the number of initialized trips
     uint256 numTrips;
 
+    // stores the number of finalized trips
+    uint256 numFinalizedTrips;
+
+
     // fires an event when new trips are registered
     event NewTripRegistered (uint256 tripID);
 
@@ -76,6 +80,7 @@ contract CarrierRegistry {
         carrierName = _name;
         carrierQualityAbsolute = 0;
         numTrips = 0;
+        numFinalizedTrips = 0;
     }
 
     // the truck is starting a trip for the carrier
@@ -83,6 +88,7 @@ contract CarrierRegistry {
         uint256 tripID = numTrips + 1;
         assert(tripID >= numTrips);
         allTrips[tripID] = Trip(msg.sender, 100000, _light, _z, 0, false);
+        numTrips = numTrips + 1;
         NewTripRegistered(tripID);
     }
 
@@ -94,7 +100,7 @@ contract CarrierRegistry {
             allTrips[_id].isFinalized = true;
             carrierQualityAbsolute = carrierQualityAbsolute + allTrips[_id].tripQuality;
             assert(carrierQualityAbsolute >= carrierQualityAbsolute);
-            numTrips = numTrips + 1;
+            numFinalizedTrips = numFinalizedTrips + 1;
         }
     }
 
@@ -165,7 +171,7 @@ contract CarrierRegistry {
 
     // allow getting the carrier quality rating
     function getCarrierQuality () constant public returns (uint256) {
-        uint256 qualityRelative = carrierQualityAbsolute / numTrips;
+        uint256 qualityRelative = carrierQualityAbsolute / numFinalizedTrips;
         return qualityRelative;
     }
 }
