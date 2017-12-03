@@ -1,8 +1,7 @@
 var web3 = require('web3');
-//var web3 = new web3(web3.givenProvider || "ws://localhost:8546");
 var web3 = new web3(new web3.providers.HttpProvider("http://localhost:8545"));
 
-var abiArray = [{"constant":true,"inputs":[],"name":"getTripNumber","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_id","type":"uint256"},{"name":"_time","type":"uint256"},{"name":"_z","type":"uint256"}],"name":"trackBumpEvent","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[],"name":"destroy","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_id","type":"uint256"},{"name":"_time","type":"uint256"},{"name":"_light","type":"uint256"}],"name":"trackLightEvent","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"_id","type":"uint256"}],"name":"isTripFinalized","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_id","type":"uint256"}],"name":"finalizeTrip","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_light","type":"uint256"},{"name":"_z","type":"uint256"}],"name":"newTrip","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"_id","type":"uint256"}],"name":"getTripRating","outputs":[{"name":"","type":"int256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"getCarrierName","outputs":[{"name":"","type":"bytes32"}],"payable":false,"stateMutability":"view","type":"function"},{"inputs":[{"name":"_name","type":"bytes32"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"}];
+var abiArray = [{"constant":true,"inputs":[],"name":"getTripNumber","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_id","type":"uint256"},{"name":"_time","type":"uint256"},{"name":"_z","type":"uint256"}],"name":"trackBumpEvent","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[],"name":"destroy","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_id","type":"uint256"},{"name":"_time","type":"uint256"},{"name":"_light","type":"uint256"}],"name":"trackLightEvent","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"_id","type":"uint256"}],"name":"isTripFinalized","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_id","type":"uint256"}],"name":"finalizeTrip","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"getCarrierQuality","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_light","type":"uint256"},{"name":"_z","type":"uint256"}],"name":"newTrip","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"_id","type":"uint256"}],"name":"getTripRating","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"getCarrierName","outputs":[{"name":"","type":"bytes32"}],"payable":false,"stateMutability":"view","type":"function"},{"inputs":[{"name":"_name","type":"bytes32"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"}];
 
 var MyContract = web3.eth.contract(abiArray);
 
@@ -37,13 +36,14 @@ function get_trip_data(contract_address, trip_id) {
         "rating":rating,
     }
 
+console.log(result);
     return result;
 }
 
 function get_contact_address_for_carrier(carrier_id) {
     switch (carrier_id) {
         case 1:
-            return '0xc3b642b11a25d3A414a3CD185f9cA18d20D8fB1F';
+            return '0xC88B6650665cE79BbC30383417CDd1ac6A47CA78';
         default:
             return;
     }
