@@ -57,6 +57,9 @@ contract CarrierRegistry {
         // intrusion status, is false if trailer was never opened
         bool intrusionDetected;
 
+        // freight status, assuming damaged if true
+        bool freightDamanged;
+
         // trip status, is false not at destination yet
         bool isFinalized;
     }
@@ -98,7 +101,7 @@ contract CarrierRegistry {
     function newTrip (uint256 _light, uint256 _z) public {
         uint256 tripID = numTrips + 1;
         assert(tripID >= numTrips);
-        allTrips[tripID] = Trip(msg.sender, 100000, _light, _z, 0, false, false);
+        allTrips[tripID] = Trip(msg.sender, 100000, _light, _z, 0, false, false, false);
         numTrips = numTrips + 1;
         TripRegistered(tripID);
     }
@@ -146,8 +149,11 @@ contract CarrierRegistry {
     function trackBumpEvent (uint _id, uint256 _time, uint256 _z) public {
         if (msg.sender == allTrips[_id].truckDevice && !allTrips[_id].isFinalized) {
 
-            // rating reduces by -0.1%
-            uint256 penalty = 100;
+            // assuming bump damaged freight
+            allTrips[_id].freightDamanged = true;
+
+            // rating reduces by -10.000%
+            uint256 penalty = 10000;
             assert(penalty <= allTrips[_id].tripQuality);
             int256 quality = int256(allTrips[_id].tripQuality - penalty);
             if (quality > 0) {
@@ -179,13 +185,20 @@ contract CarrierRegistry {
     }
 
     // allow calling the number of trips per carrier
-    function getTripNumber () constant public returns (uint256) {
+    function getTripCount () constant public returns (uint256) {
         return numTrips;
     }
 
     // allow calling the carrier name of this instance
     function getCarrierName () constant public returns (bytes32) {
         return carrierName;
+    }
+
+    // it's okay to pay the carrier if no intrusion and no damage is detected
+    function isPaymentOkay (uint256 _id) constant public returns (bool) {
+        bool noIntrusion = !allTrips[_id].intrusionDetected;
+        bool noDamage = !allTrips[_id].freightDamanged;
+        return noIntrusion && noDamage;
     }
 
     // allow getting the carrier quality rating
