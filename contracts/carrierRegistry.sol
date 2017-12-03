@@ -53,6 +53,9 @@ contract CarrierRegistry {
         // keeps track of the latest logged event
         uint256 latestEvent;
 
+        // intrusion status, is false if trailer was never opened
+        bool intrusionDetected;
+
         // trip status, is false not at destination yet
         bool isFinalized;
     }
@@ -95,7 +98,7 @@ contract CarrierRegistry {
     function newTrip (uint256 _light, uint256 _z) public {
         uint256 tripID = numTrips + 1;
         assert(tripID >= numTrips);
-        allTrips[tripID] = Trip(msg.sender, 100000, _light, _z, 0, false);
+        allTrips[tripID] = Trip(msg.sender, 100000, _light, _z, 0, false, false);
         numTrips = numTrips + 1;
         TripRegistered(tripID);
     }
@@ -119,6 +122,9 @@ contract CarrierRegistry {
     function trackLightEvent (uint256 _id, uint256 _time, uint256 _light) public {
         if (msg.sender == allTrips[_id].truckDevice && !allTrips[_id].isFinalized) {
 
+            // intrusion detected
+            allTrips[_id].intrusionDetected = true;
+
             // rating reduces by -10.000%
             uint256 penalty = 10000;
             assert(penalty <= allTrips[_id].tripQuality);
@@ -132,7 +138,7 @@ contract CarrierRegistry {
             // set light and time
             allTrips[_id].lightIllumilation = _light;
             allTrips[_id].latestEvent = _time;
-            BumpTracked(_id, _time, _light);
+            LightTracked(_id, _time, _light);
         }
     }
 
